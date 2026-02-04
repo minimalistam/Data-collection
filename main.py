@@ -98,15 +98,17 @@ def get_folder_path():
 def setup_api_key(target_folder: Path):
     """Setup API key (check env, check file, or ask user)"""
     print("\n" + "="*60)
-    print("STEP 2: GEMINI API KEY")
+    print("STEP 2: API KEY")
     print("="*60)
     
     api_key = None
-    key_file = target_folder / "Gemini-api.txt"
+    key_file = target_folder / "api_key.txt"
+    # Backwards compatibility check
+    old_key_file = target_folder / "Gemini-api.txt"
     
     # 1. Check environment variable
     if os.environ.get("GEMINI_API_KEY"):
-        print("[OK] Found GEMINI_API_KEY in environment variables.")
+        print("[OK] Found API key in environment variables.")
         return os.environ.get("GEMINI_API_KEY")
     
     # 2. Check file in target folder
@@ -115,32 +117,41 @@ def setup_api_key(target_folder: Path):
             with open(key_file, 'r') as f:
                 api_key = f.read().strip()
             if api_key:
+                print(f"[OK] Found api_key.txt in target folder.")
+                return api_key
+        except Exception:
+            pass
+            
+    if old_key_file.exists():
+        try:
+            with open(old_key_file, 'r') as f:
+                api_key = f.read().strip()
+            if api_key:
                 print(f"[OK] Found Gemini-api.txt in target folder.")
                 return api_key
         except Exception:
             pass
             
     # 3. Check file in script directory (local dev)
-    local_key_file = Path(__file__).parent / "Gemini-api.txt"
+    local_key_file = Path(__file__).parent / "api_key.txt"
     if local_key_file.exists():
          try:
             with open(local_key_file, 'r') as f:
                 api_key = f.read().strip()
             if api_key:
-                print(f"[OK] Found Gemini-api.txt in script directory.")
+                print(f"[OK] Found api_key.txt in script directory.")
                 return api_key
          except Exception:
             pass
 
     # 4. Ask user
     print("No API key found.")
-    print("Get a key from: https://aistudio.google.com/app/apikey")
     
     while not api_key:
-        api_key = input("\nEnter your Gemini API Key: ").strip()
+        api_key = input("\nEnter your LLM Provider API Key: ").strip()
     
     # Offer to save
-    save = input("Save this key to Gemini-api.txt in the data folder for next time? (y/n): ").lower()
+    save = input("Save this key to api_key.txt in the data folder for next time? (y/n): ").lower()
     if save == 'y':
         try:
             with open(key_file, 'w') as f:

@@ -530,15 +530,20 @@ def main():
              api_key = os.environ.get("GEMINI_API_KEY")
          else:
              # Check file in target dir or script dir
-             key_file = target_dir / "Gemini-api.txt"
+             key_file = target_dir / "api_key.txt"
+             old_key_file = target_dir / "Gemini-api.txt"
+             
              if not key_file.exists():
-                 key_file = Path(__file__).parent / "Gemini-api.txt"
+                 if old_key_file.exists():
+                     key_file = old_key_file
+                 else:
+                     key_file = Path(__file__).parent / "api_key.txt"
              
              if key_file.exists():
                  with open(key_file) as f: api_key = f.read().strip()
     
     if not api_key:
-        print("Error: API Key required. Set GEMINI_API_KEY env var or create Gemini-api.txt")
+        print("Error: API Key required. Set GEMINI_API_KEY env var or create api_key.txt")
         return
 
     pipeline = PDFDataExtractionPipeline(
