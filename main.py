@@ -90,8 +90,12 @@ def get_folder_path():
             print("[ERROR] No path entered. Please try again.")
             continue
             
-        # Remove quotes if user dragged and dropped
+        # Remove quotes if user dragged and dropped (Mac Terminal may add them)
         path_str = path_str.strip("'\"")
+        
+        # Remove backslash escapes (Mac Terminal drag-and-drop adds these for spaces)
+        # Replace '\ ' with just ' '
+        path_str = path_str.replace('\\ ', ' ')
         
         # Auto-fix missing leading slash on Mac/Linux
         if os.name != 'nt' and not path_str.startswith('/') and not path_str.startswith('~'):
@@ -108,7 +112,9 @@ def get_folder_path():
             return path
         else:
             print(f"[ERROR] Folder not found: {path}")
-            print("       Make sure the path is correct and starts with '/' on Mac/Linux.")
+            print(f"       Tried to access: {path}")
+            if os.name != 'nt':
+                print("       Tip: On Mac, simply drag and drop the folder into this terminal window.")
 
 def setup_api_key(target_folder: Path):
     """Setup API key (check env, check file, or ask user)"""
