@@ -18,7 +18,8 @@ A streamlined pipeline for extracting structured data from scientific PDFs using
 
 ### 1. Prerequisites
 - **Python 3.8 or higher**: [Download here](https://www.python.org/downloads/).
-- **LLM API Key**: A valid API key for your LLM provider (currently supports Google Gemini, with others planned).
+- **Gemini API Key**: Get it from [Google AI Studio](https://aistudio.google.com/app/apikey).
+- **Gemini Model**: Choose a model (e.g., `gemini-2.0-flash-exp`, `gemini-1.5-pro`). See [available models](https://ai.google.dev/gemini-api/docs/models).
 
 ### 2. Download the Code
 - Clone this repository or click **"Code" > "Download ZIP"** on GitHub and extract the file.
@@ -79,8 +80,9 @@ python3 Data-collection-pipeline.py "/path/to/pdfs" --api-key YOUR_KEY
 
 **Arguments:**
 - `TARGET_DIR`: Path to the folder containing your PDFs (default: current directory).
-- `--api-key`: Your LLM provider API key.
-- `--provider`: The LLM back-end to use (default: `gemini`).
+- `--api-key`: Your Gemini API key.
+- `--model`: Gemini model name (e.g., `gemini-2.0-flash-exp`, `gemini-1.5-pro`).
+- `--provider`: The LLM provider to use (default: `gemini`).
 - `--no-rename`: Skip the filename standardization step.
 - `--max N`: Process only the first N papers.
 

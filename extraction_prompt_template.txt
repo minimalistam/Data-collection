@@ -50,7 +50,6 @@ CRITICAL: Extract fields in this EXACT order for organized dataset columns:
 - bandgap_value: Bandgap in eV for PURE material
   [CRITICAL WARNINGS]
   - Extract bandgap of PURE material, NOT composites/heterostructures!
-  - If paper only shows composite bandgap, search for pure material bandgap elsewhere
   
 - bandgap_category: "experimental" or "theoretical" (DFT/computational)
 - bandgap_type: "direct" or "indirect"

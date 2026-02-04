@@ -186,6 +186,25 @@ def setup_api_key(target_folder: Path):
             
     return api_key
 
+def setup_gemini_model():
+    """Ask user for Gemini model name"""
+    print("\n" + "="*60)
+    print("STEP 3: GEMINI MODEL")
+    print("="*60)
+    print("Specify which Gemini model to use.")
+    print("Examples: gemini-2.0-flash-exp, gemini-1.5-pro, gemini-1.5-flash")
+    print("Check available models at: https://ai.google.dev/gemini-api/docs/models")
+    
+    model_name = None
+    while not model_name:
+        user_input = input("\nEnter Gemini model name: ").strip()
+        if not user_input:
+            print("[ERROR] Model name cannot be empty.")
+            continue
+        model_name = user_input
+    
+    return model_name
+
 def setup_prompt(target_folder: Path):
     """Setup extraction prompt"""
     print("\n" + "="*60)
@@ -242,15 +261,19 @@ def main():
     # 2. Get API Key
     api_key = setup_api_key(target_folder)
     
-    # 3. Get Prompt
+    # 3. Get Model
+    model_name = setup_gemini_model()
+    
+    # 4. Get Prompt
     prompt_file = setup_prompt(target_folder)
     
-    # 4. Confirm
+    # 5. Confirm
     pdf_count = len(list(target_folder.glob("*.pdf")))
     print("\n" + "="*60)
     print("READY TO START")
     print("="*60)
     print(f"Target:     {target_folder}")
+    print(f"Model:      {model_name}")
     print(f"PDFs found: {pdf_count}")
     print(f"Prompt:     {prompt_file.name}")
     print(f"Output:     {target_folder}/output/")
@@ -264,13 +287,14 @@ def main():
         print("Cancelled.")
         sys.exit(0)
         
-    # 5. Run Pipeline
+    # 6. Run Pipeline
     print("\nInitializing pipeline...")
     
     pipeline = PDFDataExtractionPipeline(
         target_dir=str(target_folder),
         api_key=api_key,
         provider="gemini",
+        model_name=model_name,
         prompt_file=str(prompt_file),
         rename_pdfs=True,
         debug_mode=False
