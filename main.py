@@ -83,16 +83,32 @@ def get_folder_path():
         pass  # Fallback to CLI
     
     while True:
-        path_str = input("\nEnter full path to folder(you may also drag and drop your folder here): ").strip()
+        path_str = input("\nEnter full path to folder (you may also drag and drop your folder here): ").strip()
+        
+        # Handle empty input
+        if not path_str:
+            print("[ERROR] No path entered. Please try again.")
+            continue
+            
         # Remove quotes if user dragged and dropped
         path_str = path_str.strip("'\"")
         
-        path = Path(path_str)
+        # Auto-fix missing leading slash on Mac/Linux
+        if os.name != 'nt' and not path_str.startswith('/') and not path_str.startswith('~'):
+            # Check if adding leading slash makes it valid
+            corrected_path = '/' + path_str
+            if Path(corrected_path).exists():
+                print(f"[INFO] Auto-corrected path: {corrected_path}")
+                path_str = corrected_path
+        
+        path = Path(path_str).expanduser().resolve()
+        
         if path.exists() and path.is_dir():
-            print(f"[OK] Valid folder found: {path}")
+            print(f"[OK] Valid folder: {path}")
             return path
         else:
-            print(f"[ERROR] Invalid folder. Please try again.")
+            print(f"[ERROR] Folder not found: {path}")
+            print("       Make sure the path is correct and starts with '/' on Mac/Linux.")
 
 def setup_api_key(target_folder: Path):
     """Setup API key (check env, check file, or ask user)"""
