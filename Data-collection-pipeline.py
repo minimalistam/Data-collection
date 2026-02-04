@@ -441,8 +441,7 @@ class PDFDataExtractionPipeline:
             for item in materials:
                 metadata = {
                     'source_pdf': pdf_path.name,
-                    'extracted_at': datetime.now().isoformat(),
-                    'provider': self.provider
+                    'extracted_at': datetime.now().isoformat()
                 }
                 # Prepend metadata
                 item_with_meta = {**metadata, **item}
