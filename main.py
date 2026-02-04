@@ -90,10 +90,10 @@ def get_folder_path():
         
         path = Path(path_str)
         if path.exists() and path.is_dir():
-            print(f"✓ Valid folder found: {path}")
+            print(f"[OK] Valid folder found: {path}")
             return path
         else:
-            print(f"❌ Invalid folder. Please try again.")
+            print(f"[ERROR] Invalid folder. Please try again.")
 
 def setup_api_key(target_folder: Path):
     """Setup API key (check env, check file, or ask user)"""
@@ -106,7 +106,7 @@ def setup_api_key(target_folder: Path):
     
     # 1. Check environment variable
     if os.environ.get("GEMINI_API_KEY"):
-        print("✓ Found GEMINI_API_KEY in environment variables.")
+        print("[OK] Found GEMINI_API_KEY in environment variables.")
         return os.environ.get("GEMINI_API_KEY")
     
     # 2. Check file in target folder
@@ -115,7 +115,7 @@ def setup_api_key(target_folder: Path):
             with open(key_file, 'r') as f:
                 api_key = f.read().strip()
             if api_key:
-                print(f"✓ Found Gemini-api.txt in target folder.")
+                print(f"[OK] Found Gemini-api.txt in target folder.")
                 return api_key
         except Exception:
             pass
@@ -127,7 +127,7 @@ def setup_api_key(target_folder: Path):
             with open(local_key_file, 'r') as f:
                 api_key = f.read().strip()
             if api_key:
-                print(f"✓ Found Gemini-api.txt in script directory.")
+                print(f"[OK] Found Gemini-api.txt in script directory.")
                 return api_key
          except Exception:
             pass
@@ -163,7 +163,7 @@ def setup_prompt(target_folder: Path):
     
     # 1. Check if prompt already exists in target folder
     if prompt_file.exists():
-        print(f"✓ Found existing prompt file: {prompt_file.name}")
+        print(f"[OK] Found existing prompt file: {prompt_file.name}")
         use_existing = input("Use this prompt? (y/n): ").lower()
         if use_existing == 'y':
             return prompt_file
@@ -174,7 +174,7 @@ def setup_prompt(target_folder: Path):
     if template_file.exists():
         try:
             shutil.copy(template_file, prompt_file)
-            print(f"✓ Created {default_prompt_name} from template.")
+            print(f"[OK] Created {default_prompt_name} from template.")
         except Exception as e:
             print(f"Error copying template: {e}")
             # Fallback creation
