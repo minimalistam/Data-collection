@@ -174,6 +174,7 @@ class PDFDataExtractionPipeline:
                  target_dir: str,
                  api_key: str,
                  provider: str = "gemini",
+                 model_name: str = None,
                  prompt_file: str = None,
                  rename_pdfs: bool = True,
                  debug_mode: bool = False):
@@ -184,6 +185,7 @@ class PDFDataExtractionPipeline:
             target_dir: The folder containing PDF files to process.
             api_key: API Key for the LLM provider.
             provider: LLM provider ("gemini" supported).
+            model_name: Model name (e.g., "gemini-2.0-flash-exp"). Required for Gemini.
             prompt_file: Path to custom prompt file (optional). 
                          Defaults to 'extraction_prompt.txt' in target_dir.
             rename_pdfs: Standardize filenames (True/False).
@@ -193,6 +195,13 @@ class PDFDataExtractionPipeline:
         self.workspace_dir = Path(__file__).parent.absolute()
         self.provider = provider.lower()
         self.target_dir = Path(target_dir)
+        self.model_name = model_name
+        
+        # Validate model_name for Gemini
+        if self.provider == "gemini" and not self.model_name:
+            print("Error: --model argument is required for Gemini provider.")
+            print("Example: --model gemini-2.0-flash-exp")
+            sys.exit(1)
         
         # 1. Setup Organized Folder Structure
         self.input_dir = self.target_dir  # We scan root of target_dir
@@ -215,9 +224,11 @@ class PDFDataExtractionPipeline:
         self.processed_dir.mkdir(parents=True, exist_ok=True)
         
         print("-" * 60)
-        print(f"PDF EXTRACTION PIPELINE ({self.provider.upper()})")
+        print(f"PDF EXTRACTION PIPELINE")
         print("-" * 60)
         print(f"Target Folder: {self.target_dir}")
+        print(f" • Provider:   {self.provider}")
+        print(f" • Model:      {self.model_name}")
         print(f" • Output:     {self.output_dir.name}/")
         print(f" • Processed:  {self.processed_dir.name}/")
         print(f" • Prompt:     {self.prompt_file.name}")
@@ -230,7 +241,7 @@ class PDFDataExtractionPipeline:
         if self.provider == "gemini":
             try:
                 genai.configure(api_key=api_key)
-                self.model = genai.GenerativeModel('gemini-2.5-pro-preview-03-25')
+                self.model = genai.GenerativeModel(self.model_name)
             except Exception as e:
                 print(f"Error initializing LLM Provider: {e}")
                 sys.exit(1)
@@ -242,7 +253,7 @@ class PDFDataExtractionPipeline:
         self.checkpoint = self._load_checkpoint()
         
         print("-" * 60)
-        print(f"PDF EXTRACTION PIPELINE ({self.provider.upper()})")
+        print(f"PDF EXTRACTION PIPELINE")
         print("-" * 60)
         print(f"Input:    {self.input_dir}")
         print(f"Output:   {self.output_dir}")
