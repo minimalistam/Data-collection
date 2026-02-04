@@ -16,31 +16,65 @@ A streamlined pipeline for extracting structured data from scientific PDFs using
 
 ## Installation
 
-1.  **Prerequisites**: Ensure Python 3.8+ is installed.
-2.  **Dependencies**: Install the required packages.
+### 1. Prerequisites
+- **Python 3.8 or higher**: [Download here](https://www.python.org/downloads/).
+- **LLM API Key**: A valid API key for your LLM provider (currently supports Google Gemini, with others planned).
 
-    ```bash
-    pip install -r requirements.txt
-    ```
+### 2. Download the Code
+- Clone this repository or click **"Code" > "Download ZIP"** on GitHub and extract the file.
+
+### 3. Setup Dependencies
+
+#### Windows Users:
+1. Open **Command Prompt** or **PowerShell**.
+2. Navigate to the folder where you extracted the code:
+   ```cmd
+   cd path\to\Data-collection
+   ```
+3. Install the required libraries:
+   ```cmd
+   pip install -r requirements.txt
+   ```
+
+#### Mac / Linux Users:
+1. Open **Terminal**.
+2. Navigate to the folder:
+   ```bash
+   cd /path/to/Data-collection
+   ```
+3. Install the required libraries:
+   ```bash
+   pip3 install -r requirements.txt
+   ```
 
 ---
 
 ## Usage
 
-### 1. Interactive Wizard (Recommended)
+### Interactive Wizard (Recommended)
+The easiest way to run the pipeline is via the interactive wizard, which will guide you through folder selection and configuration.
 
-The easiest way to run the pipeline is via the interactive wizard, which guides you through folder selection and configuration.
-
-```bash
+**Windows:**
+```cmd
 python main.py
 ```
 
-### 2. Command Line Interface
-
-For advanced users or automated workflows, you can run the pipeline script directly.
-
+**Mac / Linux:**
 ```bash
-python Data-collection-pipeline.py [TARGET_DIR] --api-key YOUR_KEY --provider gemini
+python3 main.py
+```
+
+### Command Line Interface (Advanced)
+For automated workflows or power users:
+
+**Windows:**
+```cmd
+python Data-collection-pipeline.py "C:\Path\To\PDFs" --api-key YOUR_KEY
+```
+
+**Mac / Linux:**
+```bash
+python3 Data-collection-pipeline.py "/path/to/pdfs" --api-key YOUR_KEY
 ```
 
 **Arguments:**
