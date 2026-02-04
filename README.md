@@ -2,9 +2,6 @@
 
 A streamlined pipeline for extracting structured data from scientific PDFs using Large Language Models (LLMs). This tool automates the process of reading PDFs, standardizing filenames, and processing content through an LLM to generate structured datasets (JSON/Excel).
 
-Currently optimized for: **Google Gemini 2.5 Pro**
-(Architecture supports extensibility to other providers)
-
 ## Features
 
 - **Direct PDF Processing**: Uploads raw PDF files directly to the LLM context, avoiding lossy text conversion steps.
@@ -88,3 +85,6 @@ Target_Directory/
 
 ## License
 MIT License
+
+## Citation
+TBC
