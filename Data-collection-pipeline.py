@@ -11,7 +11,7 @@ from datetime import datetime
 from typing import List, Dict, Optional, Tuple
 import pandas as pd
 
-# Gemini imports
+# LLM imports
 try:
     import google.generativeai as genai
 except ImportError:
@@ -232,7 +232,7 @@ class PDFDataExtractionPipeline:
                 genai.configure(api_key=api_key)
                 self.model = genai.GenerativeModel('gemini-2.5-pro-preview-03-25')
             except Exception as e:
-                print(f"Error initializing Gemini: {e}")
+                print(f"Error initializing LLM Provider: {e}")
                 sys.exit(1)
         else:
             print(f"Provider '{self.provider}' not yet implemented.")
@@ -526,7 +526,9 @@ def main():
     api_key = args.api_key
     if not api_key:
          # Check environment variable
-         if os.environ.get("GEMINI_API_KEY"):
+         if os.environ.get("LLM_API_KEY"):
+             api_key = os.environ.get("LLM_API_KEY")
+         elif os.environ.get("GEMINI_API_KEY"):
              api_key = os.environ.get("GEMINI_API_KEY")
          else:
              # Check file in target dir or script dir
@@ -543,7 +545,7 @@ def main():
                  with open(key_file) as f: api_key = f.read().strip()
     
     if not api_key:
-        print("Error: API Key required. Set GEMINI_API_KEY env var or create api_key.txt")
+        print("Error: API Key required. Set LLM_API_KEY env var or create api_key.txt")
         return
 
     pipeline = PDFDataExtractionPipeline(

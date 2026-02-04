@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Gemini PDF Pipeline - Public Workflow Wizard
+LLM PDF Pipeline - Public Workflow Wizard
 ============================================
 Interactive setup for running the extraction pipeline.
 """
@@ -43,15 +43,14 @@ if MISSING_PACKAGES:
     print("\n" + "!"*80 + "\n")
     sys.exit(1)
 
-# Import the pipeline
 try:
-    from Data_collection_pipeline import PDFDataExtractionPipeline as GeminiPDFPipeline
+    from Data_collection_pipeline import PDFDataExtractionPipeline
 except ImportError:
     # Handle the case where Python might have issues with hyphens in filenames
     try:
         import importlib
         module = importlib.import_module("Data-collection-pipeline")
-        GeminiPDFPipeline = module.PDFDataExtractionPipeline
+        PDFDataExtractionPipeline = module.PDFDataExtractionPipeline
     except ImportError:
         print("Error: Data-collection-pipeline.py not found in current directory.")
         sys.exit(1)
@@ -84,7 +83,7 @@ def get_folder_path():
         pass  # Fallback to CLI
     
     while True:
-        path_str = input("\nEnter full path to folder: ").strip()
+        path_str = input("\nEnter full path to folder(you may also drag and drop your folder here): ").strip()
         # Remove quotes if user dragged and dropped
         path_str = path_str.strip("'\"")
         
@@ -107,7 +106,10 @@ def setup_api_key(target_folder: Path):
     old_key_file = target_folder / "Gemini-api.txt"
     
     # 1. Check environment variable
-    if os.environ.get("GEMINI_API_KEY"):
+    if os.environ.get("LLM_API_KEY"):
+        print("[OK] Found API key in environment variables.")
+        return os.environ.get("LLM_API_KEY")
+    elif os.environ.get("GEMINI_API_KEY"):  # Backwards compatibility
         print("[OK] Found API key in environment variables.")
         return os.environ.get("GEMINI_API_KEY")
     
@@ -127,7 +129,7 @@ def setup_api_key(target_folder: Path):
             with open(old_key_file, 'r') as f:
                 api_key = f.read().strip()
             if api_key:
-                print(f"[OK] Found Gemini-api.txt in target folder.")
+                print(f"[OK] Found legacy key file (Gemini-api.txt).")
                 return api_key
         except Exception:
             pass
@@ -210,7 +212,7 @@ def main():
     print("="*80)
     print(" LLM DATA EXTRACTION PIPELINE")
     print("="*80)
-    print("This tool will extract structured data from scientific PDFs using LLMs.\n")
+    print("This tool will extract structured data from scientific PDFs using Local/Cloud LLMs.\n")
     
     # 1. Get Folder
     target_folder = get_folder_path()
@@ -243,7 +245,7 @@ def main():
     # 5. Run Pipeline
     print("\nInitializing pipeline...")
     
-    pipeline = GeminiPDFPipeline(
+    pipeline = PDFDataExtractionPipeline(
         target_dir=str(target_folder),
         api_key=api_key,
         provider="gemini",
