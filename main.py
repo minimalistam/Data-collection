@@ -145,7 +145,7 @@ def setup_api_key(target_folder: Path):
         try:
             with open(key_file, 'w') as f:
                 f.write(api_key)
-            print("✓ Key saved.")
+                print(f"[OK] Key saved.")
         except Exception as e:
             print(f"Warning: Could not save key file: {e}")
             
@@ -196,9 +196,10 @@ def setup_prompt(target_folder: Path):
 def main():
     clear_screen()
     print("="*80)
-    print(" GEMINI PDF EXTRACTION PIPELINE")
     print("="*80)
-    print("This tool will extract structured data from scientific PDFs using Gemini 2.5 Pro.\n")
+    print(" LLM DATA EXTRACTION PIPELINE")
+    print("="*80)
+    print("This tool will extract structured data from scientific PDFs using LLMs.\n")
     
     # 1. Get Folder
     target_folder = get_folder_path()

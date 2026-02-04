@@ -1,87 +1,90 @@
-# Gemini PDF Extraction Pipeline 🚀
+# LLM-Powered Data Collection Pipeline
 
-**The easiest way to extract structured data from scientific PDFs using Gemini 2.5 Pro.**
+A streamlined pipeline for extracting structured data from scientific PDFs using Large Language Models (LLMs). This tool automates the process of reading PDFs, standardizing filenames, and processing content through an LLM to generate structured datasets (JSON/Excel).
 
-Zero configuration required. Just point it to a folder of PDFs, and it handles the rest!
+Currently optimized for: **Google Gemini 2.5 Pro**
+(Architecture supports extensibility to other providers)
 
-## ✨ Features
+## Features
 
-- **Direct PDF Processing**: Sends the original PDF to Gemini (no messy text conversion).
-- **Auto-Renaming**: Standardizes filenames to `DOI - Title.pdf` to prevent duplicates.
-- **Smart Resume**: Remembers which files were processed (safe to stop and restart).
-- **Structured Output**: 
-  - Individual JSON files per paper.
-  - **Auto-generated Excel database**.
-- **User Friendly**: Interactive wizard guides you through setup.
+- **Direct PDF Processing**: Uploads raw PDF files directly to the LLM context, avoiding lossy text conversion steps.
+- **Automated Standardization**: Renames files to `DOI - Title.pdf` format using metadata analysis to ensure consistency and prevent duplicates.
+- **State Management**: Tracks processed files via a JSON checkpoint system, allowing the pipeline to be stopped and resumed without redundant processing.
+- **Structured Data Extraction**:
+  - Generates individual JSON records for each document.
+  - Compiles a master Excel database automatically.
+- **Interactive Wizard**: A simple `main.py` script to handle configuration, API keys, and folder selection.
 
 ---
 
-## ⚡ Quick Start
+## Installation
 
-### 1. Install Requirements
-Make sure you have Python installed. Then run:
-```bash
-pip install -r requirements.txt
-```
+1.  **Prerequisites**: Ensure Python 3.8+ is installed.
+2.  **Dependencies**: Install the required packages.
 
-### 2. Run the Wizard
+    ```bash
+    pip install -r requirements.txt
+    ```
+
+---
+
+## Usage
+
+### 1. Interactive Wizard (Recommended)
+
+The easiest way to run the pipeline is via the interactive wizard, which guides you through folder selection and configuration.
+
 ```bash
 python main.py
 ```
 
-### 3. Follow the Prompts
-1. **Select Folder**: Choose the folder containing your PDF files.
-2. **API Key**: Enter your Gemini API key (it will ask to save it securely in your folder).
-   - Get a key here: [Google AI Studio](https://aistudio.google.com/app/apikey)
-3. **Prompt**: The tool creates a default `extraction_prompt.txt` in your folder. **Edit this file** to tell the AI exactly what you want to extract!
+### 2. Command Line Interface
 
----
+For advanced users or automated workflows, you can run the pipeline script directly.
 
-## 📂 Output Structure
-
-Inside your selected PDF folder, the tool creates:
-
-```
-Your_PDF_Folder/
-├── extraction_prompt.txt    ← The instructions you gave the AI
-├── Gemini-api.txt           ← Your saved key
-├── pipeline_checkpoint.json ← Tracks progress
-├── output/
-│   ├── combined_extraction.json
-│   ├── materials_database.xlsx  ← ✨ YOUR DATA
-│   └── [individual_json_files]...
-└── processed_pdfs/          ← PDFs are moved here after processing
+```bash
+python Data-collection-pipeline.py [TARGET_DIR] --api-key YOUR_KEY --provider gemini
 ```
 
+**Arguments:**
+- `TARGET_DIR`: Path to the folder containing your PDFs (default: current directory).
+- `--api-key`: Your LLM provider API key.
+- `--provider`: The LLM back-end to use (default: `gemini`).
+- `--no-rename`: Skip the filename standardization step.
+- `--max N`: Process only the first N papers.
+
 ---
 
-## 📝 Customizing extraction
+## Configuration
 
-When you run the tool, it creates `extraction_prompt.txt`. Open this file and describe what you want in plain English.
+### Extraction Prompt
+The tool uses a prompt file to guide the LLM's extraction logic. By default, it looks for `extraction_prompt.txt` in your target directory.
+- **Action**: Edit this file to define exactly what data fields you need (e.g., "Extract material name, synthesis method, and bandgap").
+- **Template**: A default template is created automatically if one does not exist.
 
-**Example:**
-```text
-EXTRACT:
-- Material Name
-- Synthesis Method (temperature, time, precursors)
-- Bandgap (in eV)
-- Crystal Structure
+### Output Structure
+The pipeline organizes files within your target directory:
 
-OUTPUT FORMAT:
-Return a JSON array of materials.
+```
+Target_Directory/
+├── extraction_prompt.txt     # Instructions for the LLM
+├── pipeline_checkpoint.json  # Processing log/state
+├── output/                   # Extracted data
+│   ├── combined_data.json
+│   ├── dataset.xlsx          # Master database
+│   └── [file_id].json
+└── processed_pdfs/           # Successfully processed source files
 ```
 
-The default template provided is optimized for **Materials Science Synthesis**, but you can change it for *any* domain (Biology, Law, Finance, etc.).
+---
+
+## Troubleshooting
+
+- **ModuleNotFoundError**: Run `pip install -r requirements.txt`.
+- **API Errors**: Verify that your API key is valid and has access to the specified model (e.g., Gemini 2.5 Pro).
+- **Renaming Issues**: If `pymupdf` is missing or the PDF metadata is corrupt, renaming will be skipped, but extraction will proceed.
 
 ---
 
-## 🔧 Troubleshooting
-
-- **"Module not found"**: Run `pip install -r requirements.txt` again.
-- **"API Key Error"**: Check your key is valid and has access to Gemini 2.5 Pro (preview).
-- **Renaming fails**: Ensure `pymupdf` is installed. The tool will skip renaming if it can't read the metadata.
-
----
-
-**Author**: Advanced Agentic Coding Team
-**License**: MIT
+## License
+MIT License
