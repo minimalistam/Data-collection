@@ -16,7 +16,6 @@ try:
     import google.generativeai as genai
 except ImportError:
     print("ERROR: google-generativeai not installed!")
-    print("Install: pip install google-generativeai")
     sys.exit(1)
 
 # PyMuPDF for PDF renaming
@@ -26,13 +25,8 @@ try:
 except ImportError:
     HAS_PYMUPDF = False
     print("WARNING: PyMuPDF not installed - PDF renaming disabled")
-    print("Install with: pip install PyMuPDF")
 
-
-# ═══════════════════════════════════════════════════════════════════════════════
-# PDF RENAMING UTILITIES (Integrated from pdf_renamer.py)
-# ═══════════════════════════════════════════════════════════════════════════════
-
+#renaiming pdfs
 def clean_filename(text: str, max_len: int = 100) -> str:
     """Clean text for Windows-safe filename"""
     text = unicodedata.normalize("NFKD", text)
@@ -160,9 +154,7 @@ def get_unique_path(path: Path) -> Path:
             return new_path
         counter += 1
 
-# ═══════════════════════════════════════════════════════════════════════════════
-# MAIN PIPELINE CLASS
-# ═══════════════════════════════════════════════════════════════════════════════
+#Main pipeline class
 
 class PDFDataExtractionPipeline:
     """
@@ -178,20 +170,7 @@ class PDFDataExtractionPipeline:
                  prompt_file: str = None,
                  rename_pdfs: bool = True,
                  debug_mode: bool = False):
-        """
-        Initialize PDF Extraction Pipeline
-        
-        Args:
-            target_dir: The folder containing PDF files to process.
-            api_key: API Key for the LLM provider.
-            provider: LLM provider ("gemini" supported).
-            model_name: Model name (e.g., "gemini-2.0-flash-exp"). Required for Gemini.
-            prompt_file: Path to custom prompt file (optional). 
-                         Defaults to 'extraction_prompt.txt' in target_dir.
-            rename_pdfs: Standardize filenames (True/False).
-            debug_mode: Save raw API responses for debugging.
-        """
-        
+                 
         self.workspace_dir = Path(__file__).parent.absolute()
         self.provider = provider.lower()
         self.target_dir = Path(target_dir)
@@ -466,9 +445,18 @@ class PDFDataExtractionPipeline:
         
         all_pdfs = sorted(list(self.input_dir.glob("*.pdf")))
         to_process = [p for p in all_pdfs if not self._is_processed(p.name)]
+        already_processed = [p for p in all_pdfs if self._is_processed(p.name)]
+        
+        if already_processed:
+            print(f"\nSkipped {len(already_processed)} already-processed PDF(s):")
+            for pdf in already_processed:
+                print(f"  • {pdf.name}")
         
         if not to_process:
-            print("No new PDFs to process.")
+            if already_processed:
+                print(f"\nAll {len(all_pdfs)} PDF(s) have already been processed.")
+            else:
+                print("No PDFs found to process.")
             return
         
         print(f"Processing {len(to_process)} new files (Total: {len(all_pdfs)})")
